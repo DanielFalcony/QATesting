@@ -1,9 +1,5 @@
 import subprocess
 
-folder_in = "/home/danielfalcony/tst"
-folder_out = "/home/danielfalcony/out"
-folder_ext = "/home/danielfalcony/folder1"
-
 
 def checkout(cmd, text):
     result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, encoding="utf-8")
