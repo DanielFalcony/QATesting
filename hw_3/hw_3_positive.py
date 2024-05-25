@@ -1,9 +1,8 @@
-from hw_2_checkers import (checkout, take_data)
+from hw_3_checkers import (checkout, take_data)
 from conftest import data
 
 
 class TestPositive:
-
     def test_step1(self, make_folders, clear_folders, make_files):
         # test Add files to archive
         res1 = checkout(f"cd {data['folder_in']}; 7z a {data['folder_out']}/arx2", "Everything is Ok")

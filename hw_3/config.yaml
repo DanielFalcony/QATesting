@@ -1,5 +1,8 @@
+folder_original: /home/danielfalcony/test
 folder_in: /home/danielfalcony/test/tst
 folder_out: /home/danielfalcony/test/out
 folder_ext: /home/danielfalcony/test/folder1
 folder_ext2: /home/danielfalcony/test/folder2
 files_count: 10
+bs: 1M
+arx_name: arx3

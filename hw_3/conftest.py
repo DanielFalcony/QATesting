@@ -4,8 +4,7 @@ from datetime import datetime
 
 import yaml
 import pytest
-from hw_2_checkers import checkout
-
+from hw_3_checkers import checkout
 
 with open('config.yaml') as f:
     data = yaml.safe_load(f)
@@ -13,12 +12,15 @@ with open('config.yaml') as f:
 
 @pytest.fixture()
 def make_folders():
-    return checkout(f"mkdir {data['folder_in']} {data['folder_out']} {data['folder_ext']} {data['folder_ext2']}", "")
+    return checkout(
+        f"mkdir {data['folder_original']} {data['folder_in']} {data['folder_in']} {data['folder_out']} {data['folder_ext']} {data['folder_ext2']}",
+        "")
 
 
 @pytest.fixture()
 def clear_folders():
-    return checkout(f"rm -rf {data['folder_in']}/* {data['folder_out']}/* {data['folder_ext']}/* {data['folder_ext2']}/*", "")
+    return checkout(
+        f"rm -rf {data['folder_in']}/* {data['folder_out']}/* {data['folder_ext']}/* {data['folder_ext2']}/*", "")
 
 
 @pytest.fixture()
@@ -26,7 +28,8 @@ def make_files():
     list_of_files = []
     for i in range(data['files_count']):
         filename = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
-        if checkout(f"cd {data['folder_in']}; dd if=/dev/urandom of={filename} bs=1M count=1 iflag=fullblock", ""):
+        if checkout(f"cd {data['folder_in']}; dd if=/dev/urandom of={filename} bs={data['bs']} count=1 iflag=fullblock",
+                    ""):
             list_of_files.append(filename)
     return list_of_files
 
@@ -38,7 +41,7 @@ def make_subfolder():
     if not checkout(f"cd {data['folder_in']}; mkdir {sub_folder_name}", ""):
         return None, None
     if not checkout(
-            f"cd {data['folder_in']}/{sub_folder_name}; dd if=/dev/urandom of={test_file_name} bs=1M count=1 iflag=fullblock",
+            f"cd {data['folder_in']}/{sub_folder_name}; dd if=/dev/urandom of={test_file_name} bs={data['bs']} count=1 iflag=fullblock",
             ""):
         return sub_folder_name, None
     else:
@@ -49,3 +52,11 @@ def make_subfolder():
 def show_time():
     print(f"Start time: {datetime.now().strftime('%m/%d/%Y %H:%M:%S.%f')}")
     yield print(f"Stop time: {datetime.now().strftime('%m/%d/%Y %H:%M:%S.%f')}")
+
+
+@pytest.fixture()
+def make_broke_file():
+    checkout(f"cd {data['folder_in']}; 7z a {data['folder_out']}/{data['arx_name']}", "Everything is Ok")
+    checkout(f"truncate -s 1 {data['folder_out']}/{data['arx_name']}.7z", "")
+    yield f"{data['arx_name']}"
+    checkout(f"rm -f {data['folder_out']}/{data['arx_name']}.7z", "")
