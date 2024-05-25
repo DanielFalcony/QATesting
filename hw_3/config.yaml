@@ -6,3 +6,5 @@ folder_ext2: /home/danielfalcony/test/folder2
 files_count: 10
 bs: 1M
 arx_name: arx3
+arx_type: zip
+log_txt: stat.txt
