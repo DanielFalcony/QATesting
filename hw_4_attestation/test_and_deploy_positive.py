@@ -9,7 +9,7 @@ class TestPositiveSsh:
         fixture for making stats log in log file, which announced in config.yaml
         :return:
         """
-        with open(name, "w", encoding="utf-8") as f:
+        with open(name, "a+", encoding="utf-8") as f:
             f.write(ssh_getout(data['host'], data['user'], data['passwd'], f"journalctl --since '{starttime}'", ""))
 
     def test_step1(self, start_time):
@@ -42,11 +42,14 @@ class TestPositiveSsh:
         res.append(ssh_checkout(data['host'], data['user'], data['passwd'], f"cd {data['folder_in']}; 7z a -t{data['arx_type']} {data['folder_out']}/arx2", "Everything is Ok"))
         res.append(ssh_checkout(data['host'], data['user'], data['passwd'], f"ls {data['folder_out']}", f"arx2.{data['arx_type']}"))
         print(res)
-        assert all(res), "test3 FAIL"
+        self.save_log(start_time, data['log_txt'])
+        assert all(res), "test2 FAIL"
 
     def test_step3(self, start_time, inst_crc32, clear_folders, make_files, stat_log):
         """
         test check hash sum with CRC32 and 7z h on ssh connecting user
+        :param start_time:
+        :param inst_crc32:
         :param clear_folders:
         :param make_files:
         :param stat_log:
@@ -60,7 +63,8 @@ class TestPositiveSsh:
                                              f"cd {data['folder_in']}; crc32 {item}", "")).upper()
             res.append(ssh_checkout(data['host'], data['user'], data['passwd'], f"cd {data['folder_in']}; 7z h {item}",
                                     hash_date_crc32))
-        assert all(res), "test2 FAIL"
+        self.save_log(start_time, data['log_txt'])
+        assert all(res), "test3 FAIL"
 
     def test_step4(self, start_time, clear_folders, make_files, stat_log):
         """
@@ -77,7 +81,8 @@ class TestPositiveSsh:
         for item in make_files:
             res.append(ssh_checkout(data['host'], data['user'], data['passwd'],
                                     f"cd {data['folder_out']}; 7z l arx2.{data['arx_type']}", item))
-        assert all(res), "test3 FAIL"
+        self.save_log(start_time, data['log_txt'])
+        assert all(res), "test4 FAIL"
 
     def test_step5(self, start_time, clear_folders, make_files, stat_log):
         """
@@ -97,6 +102,7 @@ class TestPositiveSsh:
         for item in make_files:
             res.append(ssh_checkout(data['host'], data['user'], data['passwd'],
                                     f"ls {data['folder_ext']}", item))
+        self.save_log(start_time, data['log_txt'])
         assert all(res), "test5 FAIL"
 
     def test_step6(self, start_time, clear_folders, make_files, make_subfolder, stat_log):
@@ -122,6 +128,7 @@ class TestPositiveSsh:
                                 f"ls {data['folder_ext2']}", make_subfolder[0]))
         res.append(ssh_checkout(data['host'], data['user'], data['passwd'],
                                 f"ls {data['folder_ext2']}", make_subfolder[0]))
+        self.save_log(start_time, data['log_txt'])
         assert all(res), "test6 FAIL"
 
     def test_step7(self, start_time, stat_log):
@@ -130,6 +137,7 @@ class TestPositiveSsh:
         :param stat_log:
         :return:
         """
+        self.save_log(start_time, data['log_txt'])
         assert ssh_checkout(data['host'], data['user'], data['passwd'],
                             f"cd {data['folder_out']}; 7z t arx.{data['arx_type']}",
                             "Everything is Ok"), "test7 FAIL"
@@ -140,6 +148,7 @@ class TestPositiveSsh:
         :param stat_log:
         :return:
         """
+        self.save_log(start_time, data['log_txt'])
         assert ssh_checkout(data['host'], data['user'], data['passwd'],
                             f"cd {data['folder_in']}; 7z u arx.{data['arx_type']}",
                             "Everything is Ok"), "test8 FAIL"
@@ -150,6 +159,7 @@ class TestPositiveSsh:
         :param stat_log:
         :return:
         """
+        self.save_log(start_time, data['log_txt'])
         assert ssh_checkout(data['host'], data['user'], data['passwd'],
                             f"cd {data['folder_out']}; 7z d arx.{data['arx_type']}",
                             "Everything is Ok"), "test9 FAIL"
@@ -167,6 +177,7 @@ class TestPositiveSsh:
             iter_step = ssh_checkout(data['host'], data['user'], data['passwd'],
                                      f"cd {item}; ls -l", "total 0"), f"Here some files, {item} FAIL"
             checkout_clean.append(iter_step[0])
+        self.save_log(start_time, data['log_txt'])
         assert all(checkout_clean), "test10 FAIL"
 
     def test_step11(self, start_time, clear_folders, stat_log):
@@ -179,6 +190,7 @@ class TestPositiveSsh:
                                 f"echo {data['passwd']} | sudo -S dpkg -r {data['pocket_name']}", "Removing",))
         res.append(ssh_checkout(data['host'], data['user'], data['passwd'], f"echo {data['passwd']} | sudo -S dpkg -s {data['pocket_name']}",
                                 "Status: deinstall ok"))
+        self.save_log(start_time, data['log_txt'])
         self.save_log(start_time, data['log_txt'])
         assert all(res), "test11 FAIL"
 
