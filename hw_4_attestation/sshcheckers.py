@@ -1,6 +1,7 @@
 import paramiko, subprocess
 import yaml
 
+
 with open('config.yaml') as f:
     data = yaml.safe_load(f)
 
@@ -71,7 +72,7 @@ def upload_or_download_files(host, user, passwd, local_path, remote_path, upl_or
     :param port:
     :return:
     """
-    print(f"Загружаем файл {local_path} в каталог {remote_path}")
+    print(f"Upload file: {local_path}, to the path: {remote_path}")
     transport = paramiko.Transport((host, port))
     transport.connect(None, username=user, password=passwd)
     sftp = paramiko.SFTPClient.from_transport(transport)

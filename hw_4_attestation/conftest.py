@@ -110,3 +110,14 @@ def stat_log():
         log_string = (f"Время: {datetime.now().strftime('%H:%M:%S.%f')}, Кол-во файлов: {data['files_count']}, "
                       f"Размер файлов: {data['bs']}, Загрузка процессора: {take_data('cat /proc/loadavg')} \n")
         yield l.write(log_string)
+
+
+@pytest.fixture()
+def inst_crc32():
+    """
+    fixture for making folders
+    :return:
+    """
+    ssh_checkout(data['host'], data['user'], data['passwd'], f"echo {data['passwd']} | "
+                                                             f"sudo apt-get -y install node-crc32", "")
+    print("crc32 onstalled")
